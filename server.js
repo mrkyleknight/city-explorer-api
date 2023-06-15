@@ -2,45 +2,44 @@
 
 console.log('Yay! Our first server!');
 
-
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
+
+let data = require('./data/weather.json');
 
 const app = express();
 
 app.use(cors());
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
+app.listen(PORT, () => console.log(`We are running ${PORT}!`));
 
+class Forecast {
+  constructor(cityObj) {
+    this.date = cityObj.valid_date;
+    this.description = cityObj.weather.description;
+  }
+}
 
-app.listen(PORT, ()=> console.log(`We are running ${PORT}!`));
+app.get('/weather', (request, response, next) => {
+  try {
+    let lat = request.query.lat;
+    let lon = request.query.lon;
+    let searchQuery = request.query.searchQuery;
 
+    console.log('Search Query:', searchQuery);
 
+    let foundCity = data.find(city => city.city_name.toLowerCase() === searchQuery.toLowerCase());
 
-
-app.get('/', (request, response)=>{
-  response.status(200).send('Welcome');
-
-});
-
-
-
-app.get('/hello', (request, response) => {
-  console.log(request.query);
-  let userFirstName = request.query.firstname;
-  let userLastName = request.query.lastname;
-
-  response.status(200).send(`hello ${request.query.firstname} ${userLastName}`);
-});
-
-app.get('*',(request, response) => {
-  response.status(404).send('Sorry, page not found');
-
-});
-
-app.use((error, request, response, next)=>{
-  console.log(error.message);
-  response.status(500).send(error.message);
-
+    if (foundCity) {
+      let weatherForecast = foundCity.data.map(data => new Forecast(data));
+      response.status(200).send(weatherForecast);
+    } else {
+      response.status(404).send('CANNOT BE FOUND');
+    }
+  } catch (error) {
+    response.status(500).send(error.message);
+    next(error);
+  }
 });
