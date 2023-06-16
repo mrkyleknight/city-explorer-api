@@ -6,14 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-
-"repository": {
-  "type": "git",
-  "url": "git+https://github.com/mrkyleknight/city-explorer-api.git"
-},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrkyleknight/city-explorer-api.git"
+  },
   "author": "Kyle Knight",
   "license": "MIT",
   "dependencies": {
+    "axios": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^16.1.4",
     "express": "^4.18.2"
